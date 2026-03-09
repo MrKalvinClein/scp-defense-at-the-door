@@ -1,0 +1,628 @@
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local Players = game:GetService('Players')
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = Players.LocalPlayer
+local RemoteEvent = ReplicatedStorage:WaitForChild('EventBus'):WaitForChild('RemoteEvent')
+
+local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+
+local Window = WindUI:CreateWindow({
+    Title = "Command Controller",
+    Icon = "command",
+    Author = "v2",
+    HideSearchBar = false,
+    Transparency = 0.4
+})
+
+local currentKeybind = "F"
+
+local EnergyTab = Window:Tab({
+    Title = "Energy",
+    Icon = "zap",
+})
+
+local energyAmount = 0
+
+EnergyTab:Input({
+    Title = "Amount",
+    Placeholder = "Enter amount...",
+    Callback = function(value)
+        energyAmount = tonumber(value) or 0
+    end
+})
+
+EnergyTab:Space()
+
+EnergyTab:Button({
+    Title = "Give to Me",
+    Desc = "Runs the command only for you.",
+    Callback = function()
+        print('Firing ENERGY command for ' .. LocalPlayer.Name .. ' with amount -10000000000000000')
+        RemoteEvent:FireServer('ECS_COMMAND', 'CommandBuild', {
+            Level = 1,
+            Config = {
+                DescribeText = 'Making Energy',
+                Max = 1,
+                BuildingType = 'Production',
+                SpawnID = 'rbxassetid://16238114517',
+                LevelAttributes = {
+                    [1] = 'Spawn',
+                },
+                Levels = {
+                    [1] = {
+                        SellGold = {
+                            [1] = {
+                                [1] = 'Bonfire',
+                                [2] = 64,
+                            },
+                        },
+                        ImageID = {
+                            [1] = 'rbxassetid://16181837011',
+                        },
+                        Spawn = {
+                            [1] = 'Gold',
+                            [2] = 8,
+                        },
+                        Cost = {
+                            [1] = {
+                                [1] = 'Bonfire',
+                                [2] = -10000000000000000,
+                                [3] = 'rbxassetid://15181078803',
+                            },
+                        },
+                    },
+                    [2] = {
+                        SellGold = {
+                            [1] = {
+                                [1] = 'Bonfire',
+                                [2] = 512,
+                            },
+                        },
+                        ImageID = {
+                            [1] = 'rbxassetid://16181836889',
+                        },
+                        Spawn = {
+                            [1] = 'Gold',
+                            [2] = 32,
+                        },
+                        Cost = {
+                            [1] = {
+                                [1] = 'Bonfire',
+                                [2] = 1024,
+                                [3] = 'rbxassetid://15181078803',
+                            },
+                        },
+                    },
+                },
+                Name = 'Candy',
+                ImageRectOffset = Vector2.new(0, 0),
+                TypeCode = 'e',
+                Sellable = true,
+                Components = {
+                    [1] = 'Candy',
+                    [2] = 'Spawn',
+                },
+                Buildable = true,
+            },
+            UserId = LocalPlayer.UserId,
+            SectorId = 524,
+        })
+    end
+})
+
+EnergyTab:Space()
+
+EnergyTab:Button({
+    Title = "Give to All",
+    Desc = "Runs the command for everyone in the server.",
+    Callback = function()
+        for _, player in ipairs(Players:GetPlayers()) do
+            print('Firing ENERGY command for ' .. player.Name .. ' with amount -10000000000000000')
+            RemoteEvent:FireServer('ECS_COMMAND', 'CommandBuild', {
+                Level = 1,
+                Config = {
+                    DescribeText = 'Making Energy',
+                    Max = 1,
+                    BuildingType = 'Production',
+                    SpawnID = 'rbxassetid://16238114517',
+                    LevelAttributes = {
+                        [1] = 'Spawn',
+                    },
+                    Levels = {
+                        [1] = {
+                            SellGold = {
+                                [1] = {
+                                    [1] = 'Bonfire',
+                                    [2] = 64,
+                                },
+                            },
+                            ImageID = {
+                                [1] = 'rbxassetid://16181837011',
+                            },
+                            Spawn = {
+                                [1] = 'Gold',
+                                [2] = 8,
+                            },
+                            Cost = {
+                                [1] = {
+                                    [1] = 'Bonfire',
+                                    [2] = -10000000000000000,
+                                    [3] = 'rbxassetid://15181078803',
+                                },
+                            },
+                        },
+                        [2] = {
+                            SellGold = {
+                                [1] = {
+                                    [1] = 'Bonfire',
+                                    [2] = 512,
+                                },
+                            },
+                            ImageID = {
+                                [1] = 'rbxassetid://16181836889',
+                            },
+                            Spawn = {
+                                [1] = 'Gold',
+                                [2] = 32,
+                            },
+                            Cost = {
+                                [1] = {
+                                    [1] = 'Bonfire',
+                                    [2] = 1024,
+                                    [3] = 'rbxassetid://15181078803',
+                                },
+                            },
+                        },
+                    },
+                    Name = 'Candy',
+                    ImageRectOffset = Vector2.new(0, 0),
+                    TypeCode = 'e',
+                    Sellable = true,
+                    Components = {
+                        [1] = 'Candy',
+                        [2] = 'Spawn',
+                    },
+                    Buildable = true,
+                },
+                UserId = player.UserId,
+                SectorId = 524,
+            })
+        end
+    end
+})
+
+EnergyTab:Space()
+
+local infAllEnabled = false
+
+EnergyTab:Toggle({
+    Title = "Inf All",
+    Desc = "Infinitely gives energy to everyone",
+    Value = false,
+    Callback = function(state)
+        infAllEnabled = state
+        if state then
+            task.spawn(function()
+                while infAllEnabled do
+                    for _, player in ipairs(Players:GetPlayers()) do
+                        RemoteEvent:FireServer('ECS_COMMAND', 'CommandBuild', {
+                            Level = 1,
+                            Config = {
+                                DescribeText = 'Making Energy',
+                                Max = 1,
+                                BuildingType = 'Production',
+                                SpawnID = 'rbxassetid://16238114517',
+                                LevelAttributes = {
+                                    [1] = 'Spawn',
+                                },
+                                Levels = {
+                                    [1] = {
+                                        SellGold = {
+                                            [1] = {
+                                                [1] = 'Bonfire',
+                                                [2] = 64,
+                                            },
+                                        },
+                                        ImageID = {
+                                            [1] = 'rbxassetid://16181837011',
+                                        },
+                                        Spawn = {
+                                            [1] = 'Gold',
+                                            [2] = 8,
+                                        },
+                                        Cost = {
+                                            [1] = {
+                                                [1] = 'Bonfire',
+                                                [2] = -10000000000000000,
+                                                [3] = 'rbxassetid://15181078803',
+                                            },
+                                        },
+                                    },
+                                    [2] = {
+                                        SellGold = {
+                                            [1] = {
+                                                [1] = 'Bonfire',
+                                                [2] = 512,
+                                            },
+                                        },
+                                        ImageID = {
+                                            [1] = 'rbxassetid://16181836889',
+                                        },
+                                        Spawn = {
+                                            [1] = 'Gold',
+                                            [2] = 32,
+                                        },
+                                        Cost = {
+                                            [1] = {
+                                                [1] = 'Bonfire',
+                                                [2] = 1024,
+                                                [3] = 'rbxassetid://15181078803',
+                                            },
+                                        },
+                                    },
+                                },
+                                Name = 'Candy',
+                                ImageRectOffset = Vector2.new(0, 0),
+                                TypeCode = 'e',
+                                Sellable = true,
+                                Components = {
+                                    [1] = 'Candy',
+                                    [2] = 'Spawn',
+                                },
+                                Buildable = true,
+                            },
+                            UserId = player.UserId,
+                            SectorId = 524,
+                        })
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+local CrystalTab = Window:Tab({
+    Title = "Crystal",
+    Icon = "gem",
+})
+
+local crystalAmount = 0
+
+CrystalTab:Input({
+    Title = "Amount",
+    Placeholder = "Enter amount...",
+    Callback = function(value)
+        crystalAmount = tonumber(value) or 0
+    end
+})
+
+CrystalTab:Space()
+
+CrystalTab:Button({
+    Title = "Give to Me",
+    Desc = "Runs the command only for you.",
+    Callback = function()
+        print('Firing CRYSTAL command for ' .. LocalPlayer.Name .. ' with amount -999999999999')
+        RemoteEvent:FireServer('ECS_COMMAND', 'CommandBuild', {
+            Level = 1,
+            Config = {
+                DescribeText = 'Making Crystal',
+                Max = 1,
+                BuildingType = 'Production',
+                SpawnID = 'rbxassetid://16238114778',
+                LevelAttributes = {
+                    [1] = 'Spawn',
+                },
+                Levels = {
+                    [1] = {
+                        SellGold = {
+                            [1] = {
+                                [1] = 'Gold',
+                                [2] = 100,
+                            },
+                        },
+                        ImageID = {
+                            [1] = 'rbxassetid://16205131933',
+                        },
+                        Spawn = {
+                            [1] = 'Bonfire',
+                            [2] = 1,
+                        },
+                        Cost = {
+                            [1] = {
+                                [1] = 'Gold',
+                                [2] = -999999999999,
+                                [3] = 'rbxassetid://15181078697',
+                            },
+                        },
+                    },
+                    [2] = {
+                        SellGold = {
+                            [1] = {
+                                [1] = 'Gold',
+                                [2] = 200,
+                            },
+                        },
+                        ImageID = {
+                            [1] = 'rbxassetid://16205131658',
+                        },
+                        Spawn = {
+                            [1] = 'Bonfire',
+                            [2] = 2,
+                        },
+                        Cost = {
+                            [1] = {
+                                [1] = 'Gold',
+                                [2] = 400,
+                                [3] = 'rbxassetid://15181078697',
+                            },
+                        },
+                    },
+                },
+                Name = 'Arcade',
+                ImageRectOffset = Vector2.new(0, 0),
+                TypeCode = 'd',
+                Sellable = true,
+                Components = {
+                    [1] = 'Arcade',
+                    [2] = 'Spawn',
+                },
+                Buildable = true,
+            },
+            UserId = LocalPlayer.UserId,
+            SectorId = 1,
+        })
+    end
+})
+
+CrystalTab:Space()
+
+CrystalTab:Button({
+    Title = "Give to All",
+    Desc = "Runs the command for everyone in the server.",
+    Callback = function()
+        for _, player in ipairs(Players:GetPlayers()) do
+            print('Firing CRYSTAL command for ' .. player.Name .. ' with amount -999999999999')
+            RemoteEvent:FireServer('ECS_COMMAND', 'CommandBuild', {
+                Level = 1,
+                Config = {
+                    DescribeText = 'Making Crystal',
+                    Max = 1,
+                    BuildingType = 'Production',
+                    SpawnID = 'rbxassetid://16238114778',
+                    LevelAttributes = {
+                        [1] = 'Spawn',
+                    },
+                    Levels = {
+                        [1] = {
+                            SellGold = {
+                                [1] = {
+                                    [1] = 'Gold',
+                                    [2] = 100,
+                                },
+                            },
+                            ImageID = {
+                                [1] = 'rbxassetid://16205131933',
+                            },
+                            Spawn = {
+                                [1] = 'Bonfire',
+                                [2] = 1,
+                            },
+                            Cost = {
+                                [1] = {
+                                    [1] = 'Gold',
+                                    [2] = -999999999999,
+                                    [3] = 'rbxassetid://15181078697',
+                                },
+                            },
+                        },
+                        [2] = {
+                            SellGold = {
+                                [1] = {
+                                    [1] = 'Gold',
+                                    [2] = 200,
+                                },
+                            },
+                            ImageID = {
+                                [1] = 'rbxassetid://16205131658',
+                            },
+                            Spawn = {
+                                [1] = 'Bonfire',
+                                [2] = 2,
+                            },
+                            Cost = {
+                                [1] = {
+                                    [1] = 'Gold',
+                                    [2] = 400,
+                                    [3] = 'rbxassetid://15181078697',
+                                },
+                            },
+                        },
+                    },
+                    Name = 'Arcade',
+                    ImageRectOffset = Vector2.new(0, 0),
+                    TypeCode = 'd',
+                    Sellable = true,
+                    Components = {
+                        [1] = 'Arcade',
+                        [2] = 'Spawn',
+                    },
+                    Buildable = true,
+                },
+                UserId = player.UserId,
+                SectorId = 1,
+            })
+        end
+    end
+})
+
+local MiscTab = Window:Tab({
+    Title = "Misc",
+    Icon = "settings",
+})
+
+MiscTab:Toggle({
+    Title = "Anti-AFK",
+    Desc = "Prevent being kicked for inactivity",
+    Value = false,
+    Callback = function(state)
+        if state then
+            local VirtualUser = game:GetService("VirtualUser")
+            LocalPlayer.Idled:Connect(function()
+                VirtualUser:CaptureController()
+                VirtualUser:ClickButton2(Vector2.new())
+            end)
+        end
+    end
+})
+
+MiscTab:Space()
+
+MiscTab:Button({
+    Title = "Rejoin Server",
+    Icon = "refresh-cw",
+    Justify = "Center",
+    Callback = function()
+        local TeleportService = game:GetService("TeleportService")
+        TeleportService:Teleport(game.PlaceId, LocalPlayer)
+    end
+})
+
+MiscTab:Space()
+
+MiscTab:Button({
+    Title = "Server Hop",
+    Icon = "shuffle",
+    Justify = "Center",
+    Callback = function()
+        local HttpService = game:GetService("HttpService")
+        local TeleportService = game:GetService("TeleportService")
+        local PlaceId = game.PlaceId
+        
+        local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"))
+        
+        if servers and servers.data then
+            for _, server in pairs(servers.data) do
+                if server.id ~= game.JobId then
+                    TeleportService:TeleportToPlaceInstance(PlaceId, server.id, LocalPlayer)
+                    break
+                end
+            end
+        end
+    end
+})
+
+MiscTab:Space()
+
+MiscTab:Input({
+    Title = "Keybind",
+    Placeholder = "Enter keybind",
+    Callback = function(text)
+        if text and #text > 0 then
+            if isMobile then
+                WindUI:Notify({
+                    Title = "Mobile Device",
+                    Content = "You cant change keybind on mobile, use the open gui button instead",
+                    Duration = 2,
+                })
+                return
+            end
+            
+            if #text > 1 then
+                WindUI:Notify({
+                    Title = "Invalid Keybind",
+                    Content = "You cant put a keybind that has more than 1 letter",
+                    Duration = 2,
+                })
+                return
+            end
+            
+            local keyName = string.upper(text)
+            
+            if keyName == "F" then
+                WindUI:Notify({
+                    Title = "Invalid Keybind",
+                    Content = "This is already the default keybind",
+                    Duration = 2,
+                })
+                return
+            end
+            
+            if tonumber(keyName) then
+                WindUI:Notify({
+                    Title = "Invalid Keybind",
+                    Content = "You cant put a number as a keybind",
+                    Duration = 2,
+                })
+                return
+            end
+            
+            local restrictedKeys = {"A", "S", "D", "W", "SPACE", "UP", "DOWN", "LEFT", "RIGHT", "ESCAPE", "LEFTSHIFT", "SHIFT", "LSHIFT"}
+            if table.find(restrictedKeys, keyName) then
+                WindUI:Notify({
+                    Title = "Invalid Key",
+                    Content = "You cant use movement keys",
+                    Duration = 2,
+                })
+                return
+            end
+            
+            local keyCode = Enum.KeyCode[keyName]
+            if keyCode then
+                Window:SetToggleKey(keyCode)
+                currentKeybind = keyName
+                
+                Window:EditOpenButton({
+                    Title = "Keybind: " .. keyName,
+                    Icon = "grip",
+                    CornerRadius = UDim.new(0,16),
+                    StrokeThickness = 2,
+                    OnlyMobile = false,
+                    Enabled = true,
+                    Draggable = false,
+                })
+                
+                WindUI:Notify({
+                    Title = "Keybind Updated",
+                    Content = "Menu toggle keybind changed to: " .. keyName,
+                    Duration = 2,
+                })
+            else
+                WindUI:Notify({
+                    Title = "Invalid Keybind",
+                    Content = "Keybind '" .. text .. "' is not valid",
+                    Duration = 2,
+                })
+            end
+        end
+    end
+})
+
+if not isMobile then
+    Window:EditOpenButton({
+        Title = "Keybind: F",
+        Icon = "grip",
+        CornerRadius = UDim.new(0,16),
+        StrokeThickness = 2,
+        OnlyMobile = false,
+        Enabled = true,
+        Draggable = false,
+    })
+    
+    Window:SetToggleKey(Enum.KeyCode.F)
+else
+    Window:EditOpenButton({
+        Title = "Scp defense door ☢️",
+        Icon = "grip",
+        CornerRadius = UDim.new(0,16),
+        StrokeThickness = 2,
+        OnlyMobile = true,
+        Enabled = true,
+        Draggable = true,
+    })
+end
