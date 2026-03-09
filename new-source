@@ -201,84 +201,153 @@ local infAllEnabled = false
 
 EnergyTab:Toggle({
     Title = "Inf All",
-    Desc = "Infinitely gives energy to everyone",
+    Desc = "Infinitely gives energy and crystal to you",
     Value = false,
     Callback = function(state)
         infAllEnabled = state
         if state then
             task.spawn(function()
                 while infAllEnabled do
-                    for _, player in ipairs(Players:GetPlayers()) do
-                        RemoteEvent:FireServer('ECS_COMMAND', 'CommandBuild', {
-                            Level = 1,
-                            Config = {
-                                DescribeText = 'Making Energy',
-                                Max = 1,
-                                BuildingType = 'Production',
-                                SpawnID = 'rbxassetid://16238114517',
-                                LevelAttributes = {
-                                    [1] = 'Spawn',
-                                },
-                                Levels = {
-                                    [1] = {
-                                        SellGold = {
-                                            [1] = {
-                                                [1] = 'Bonfire',
-                                                [2] = 64,
-                                            },
-                                        },
-                                        ImageID = {
-                                            [1] = 'rbxassetid://16181837011',
-                                        },
-                                        Spawn = {
-                                            [1] = 'Gold',
-                                            [2] = 8,
-                                        },
-                                        Cost = {
-                                            [1] = {
-                                                [1] = 'Bonfire',
-                                                [2] = -10000000000000000,
-                                                [3] = 'rbxassetid://15181078803',
-                                            },
-                                        },
-                                    },
-                                    [2] = {
-                                        SellGold = {
-                                            [1] = {
-                                                [1] = 'Bonfire',
-                                                [2] = 512,
-                                            },
-                                        },
-                                        ImageID = {
-                                            [1] = 'rbxassetid://16181836889',
-                                        },
-                                        Spawn = {
-                                            [1] = 'Gold',
-                                            [2] = 32,
-                                        },
-                                        Cost = {
-                                            [1] = {
-                                                [1] = 'Bonfire',
-                                                [2] = 1024,
-                                                [3] = 'rbxassetid://15181078803',
-                                            },
-                                        },
-                                    },
-                                },
-                                Name = 'Candy',
-                                ImageRectOffset = Vector2.new(0, 0),
-                                TypeCode = 'e',
-                                Sellable = true,
-                                Components = {
-                                    [1] = 'Candy',
-                                    [2] = 'Spawn',
-                                },
-                                Buildable = true,
+                    RemoteEvent:FireServer('ECS_COMMAND', 'CommandBuild', {
+                        Level = 1,
+                        Config = {
+                            DescribeText = 'Making Energy',
+                            Max = 1,
+                            BuildingType = 'Production',
+                            SpawnID = 'rbxassetid://16238114517',
+                            LevelAttributes = {
+                                [1] = 'Spawn',
                             },
-                            UserId = player.UserId,
-                            SectorId = 524,
-                        })
-                    end
+                            Levels = {
+                                [1] = {
+                                    SellGold = {
+                                        [1] = {
+                                            [1] = 'Bonfire',
+                                            [2] = 64,
+                                        },
+                                    },
+                                    ImageID = {
+                                        [1] = 'rbxassetid://16181837011',
+                                    },
+                                    Spawn = {
+                                        [1] = 'Gold',
+                                        [2] = 8,
+                                    },
+                                    Cost = {
+                                        [1] = {
+                                            [1] = 'Bonfire',
+                                            [2] = -10000000000000000,
+                                            [3] = 'rbxassetid://15181078803',
+                                        },
+                                    },
+                                },
+                                [2] = {
+                                    SellGold = {
+                                        [1] = {
+                                            [1] = 'Bonfire',
+                                            [2] = 512,
+                                        },
+                                    },
+                                    ImageID = {
+                                        [1] = 'rbxassetid://16181836889',
+                                    },
+                                    Spawn = {
+                                        [1] = 'Gold',
+                                        [2] = 32,
+                                    },
+                                    Cost = {
+                                        [1] = {
+                                            [1] = 'Bonfire',
+                                            [2] = 1024,
+                                            [3] = 'rbxassetid://15181078803',
+                                        },
+                                    },
+                                },
+                            },
+                            Name = 'Candy',
+                            ImageRectOffset = Vector2.new(0, 0),
+                            TypeCode = 'e',
+                            Sellable = true,
+                            Components = {
+                                [1] = 'Candy',
+                                [2] = 'Spawn',
+                            },
+                            Buildable = true,
+                        },
+                        UserId = LocalPlayer.UserId,
+                        SectorId = 524,
+                    })
+                    
+                    RemoteEvent:FireServer('ECS_COMMAND', 'CommandBuild', {
+                        Level = 1,
+                        Config = {
+                            DescribeText = 'Making Crystal',
+                            Max = 1,
+                            BuildingType = 'Production',
+                            SpawnID = 'rbxassetid://16238114778',
+                            LevelAttributes = {
+                                [1] = 'Spawn',
+                            },
+                            Levels = {
+                                [1] = {
+                                    SellGold = {
+                                        [1] = {
+                                            [1] = 'Gold',
+                                            [2] = 100,
+                                        },
+                                    },
+                                    ImageID = {
+                                        [1] = 'rbxassetid://16205131933',
+                                    },
+                                    Spawn = {
+                                        [1] = 'Bonfire',
+                                        [2] = 1,
+                                    },
+                                    Cost = {
+                                        [1] = {
+                                            [1] = 'Gold',
+                                            [2] = -999999999999,
+                                            [3] = 'rbxassetid://15181078697',
+                                        },
+                                    },
+                                },
+                                [2] = {
+                                    SellGold = {
+                                        [1] = {
+                                            [1] = 'Gold',
+                                            [2] = 200,
+                                        },
+                                    },
+                                    ImageID = {
+                                        [1] = 'rbxassetid://16205131658',
+                                    },
+                                    Spawn = {
+                                        [1] = 'Bonfire',
+                                        [2] = 2,
+                                    },
+                                    Cost = {
+                                        [1] = {
+                                            [1] = 'Gold',
+                                            [2] = 400,
+                                            [3] = 'rbxassetid://15181078697',
+                                        },
+                                    },
+                                },
+                            },
+                            Name = 'Arcade',
+                            ImageRectOffset = Vector2.new(0, 0),
+                            TypeCode = 'd',
+                            Sellable = true,
+                            Components = {
+                                [1] = 'Arcade',
+                                [2] = 'Spawn',
+                            },
+                            Buildable = true,
+                        },
+                        UserId = LocalPlayer.UserId,
+                        SectorId = 1,
+                    })
+                    
                     task.wait(0.1)
                 end
             end)
