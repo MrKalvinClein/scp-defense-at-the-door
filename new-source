@@ -686,7 +686,7 @@ if not isMobile then
     Window:SetToggleKey(Enum.KeyCode.F)
 else
     Window:EditOpenButton({
-        Title = "Scp defense door ☢️",
+        Title = "scp at the door",
         Icon = "grip",
         CornerRadius = UDim.new(0,16),
         StrokeThickness = 2,
